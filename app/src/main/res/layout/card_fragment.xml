@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="Cards Fragment" android:layout_gravity="center"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <Spinner
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/spSavedCards"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <EditText
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:inputType="number" android:hint="Card Number"
+        android:id="@+id/etCardNumber"/>
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:weightSum="7" android:orientation="horizontal"
+        android:padding="16sp">
+        <EditText
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/etExpiryMonth" android:hint="Month"
+            android:layout_weight="2" android:inputType="number"/>
+        <EditText
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/etExpiryYear" android:layout_weight="2"
+            android:hint="Year" android:inputType="number"/>
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+        <EditText
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/etCVNumber" android:inputType="number"
+            android:hint="CV Number" android:layout_weight="3"/>
+    </LinearLayout>
+
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <Button
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/bCard" android:text="Submit"/>
+
+</LinearLayout>

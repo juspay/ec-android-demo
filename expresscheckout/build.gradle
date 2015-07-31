@@ -1,0 +1,158 @@
+
+import javax.mail.internet.* ;
+import javax.mail.* ;
+import javax.activation.*;
+
+import com.amazonaws.auth.AWSCredentials
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.cloudfront.AmazonCloudFrontClient
+import com.amazonaws.services.cloudfront.model.CreateInvalidationRequest
+import com.amazonaws.services.cloudfront.model.InvalidationBatch
+import com.amazonaws.services.cloudfront.model.Paths
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.model.CannedAccessControlList
+import com.amazonaws.services.s3.model.GetObjectRequest
+import com.amazonaws.services.s3.model.ObjectMetadata
+import com.amazonaws.services.s3.model.PutObjectRequest
+import com.amazonaws.services.s3.transfer.TransferManager
+import com.amazonaws.auth.PropertiesFileCredentialsProvider
+
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
+import java.security.Key
+import java.security.MessageDigest
+import java.util.zip.GZIPOutputStream
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.codec.binary.Base64;
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.eriwen:gradle-js-plugin:1.9.0'
+        classpath 'com.amazonaws:aws-java-sdk:1.7.3'
+        classpath 'javax.activation:activation:1.1'
+        classpath 'javax.mail:mail:1.4.1'
+        classpath 'org.apache.httpcomponents:httpclient:4.5'
+    }
+}
+
+apply plugin: 'android-library'
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+}
+
+tasks.create(name: 'minifyJsFiles') {
+}
+
+tasks.create(name: 'incrementConfigandAcsVersion') << {
+}
+
+tasks.create(name: 'generateConfigJson', dependsOn: 'minifyJsFiles') {
+}
+
+tasks.create(name: 'createJsaFiles', dependsOn: ['minifyJsFiles', 'generateConfigJson']) {
+}
+
+private void writeByteArray(String filePath, byte[] encrypted) {
+    println ("Packaging File - " + filePath)
+    FileOutputStream encryptedOS = new FileOutputStream(file(filePath));
+    encryptedOS.write(encrypted);
+    encryptedOS.close();
+}
+
+private byte[] encryptByteArray(byte[] compressed) {
+    String algorithm = "AES";
+    byte[] keyValue = [(byte) 204,  51, (byte) 188, (byte) 135, (byte)212, (byte)142, (byte)197, (byte)236, (byte)177,  22,  34, (byte)179, (byte)208, (byte)181,  45,  93];
+
+    Key key = new SecretKeySpec(keyValue, algorithm);
+    Cipher cipher = Cipher.getInstance(algorithm);
+    cipher.init(Cipher.ENCRYPT_MODE, key);
+    byte[] encrypted = cipher.doFinal(compressed);
+    encrypted
+}
+
+private byte[] gzipByteArray(byte[] uncompressed) {
+    ByteArrayOutputStream gzippedBOS = new ByteArrayOutputStream();
+    GZIPOutputStream gzipOutputStream = new GZIPOutputStream(gzippedBOS);
+    gzipOutputStream.write(uncompressed);
+    gzippedBOS.close();
+    gzipOutputStream.close();
+    byte[] compressed = gzippedBOS.toByteArray();
+    compressed
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 21
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:21.0.3'
+}
+
+
+tasks.create(name: 'mavenPrep') << {
+    project.ext.set("mavenRepo", "/tmp/_mvn_godel")
+    File f = new File(project.mavenRepo)
+    f.exists() && f.deleteDir() && f.mkdir() || f.mkdir()
+}
+
+project.ext.set("pomVersion", "0.1")
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://localhost/tmp/_mvn_ec")
+            pom.groupId = 'in.juspay'
+            pom.artifactId = 'express-checkout'
+            pom.version = project.pomVersion
+        }
+    }
+}
+
+
+// upload all the build artifacts to S3.
+tasks.create(name: "s3Uploader") << {
+
+
+
+}
+
+// Task to create tar.gz that can be used as a project dependency for eclipse based projects
+task createEclipseStyleProject(type: Exec) {
+    workingDir "${projectDir}"
+    commandLine './to_eclipse.sh'
+    println project.pomVersion
+    args(["godel", project.pomVersion])
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+mavenPrep.dependsOn("assemble")
+uploadArchives.dependsOn("mavenPrep")
+// createEclipseStyleProject.dependsOn("uploadArchives")
+s3Uploader.dependsOn("uploadArchives")
+

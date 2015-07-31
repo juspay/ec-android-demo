@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:padding="16sp"
+    android:id="@+id/popup_element" >
+
+    <!--android:background="#009688"-->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Card Number"
+        android:id="@+id/etCardNumber"
+        android:inputType="number"/>
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bAdd"
+        android:text="Add Card"/>
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+    <Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/bCancel"
+    android:text="Cancel"/>
+
+</LinearLayout>

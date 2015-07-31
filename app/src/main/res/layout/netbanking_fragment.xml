@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="NetBanking Fragment" android:layout_gravity="center_horizontal"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <Spinner
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/spNetBanking"/>
+
+    <TextView android:layout_width="match_parent" android:layout_height="16sp" />
+
+    <Button
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:id="@+id/bNetBanking" android:text="Submit"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDisplay"/>
+
+</LinearLayout>
